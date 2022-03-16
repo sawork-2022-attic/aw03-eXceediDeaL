@@ -34,6 +34,7 @@ public class PosController {
     @GetMapping("/charge")
     public String charge(Model model) {
         setModel(model);
+        posService.checkout(posService.getCart());
         return "index";
     }
 
