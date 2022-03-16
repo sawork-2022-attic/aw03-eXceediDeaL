@@ -40,8 +40,8 @@ public class PosServiceImp implements PosService {
     }
 
     @Override
-    public void total(Cart cart) {
-
+    public double total(Cart cart) {
+        return cart.total();
     }
 
     @Override
@@ -55,7 +55,27 @@ public class PosServiceImp implements PosService {
         Product product = posDB.getProduct(productId);
         if (product == null) return false;
 
-        this.getCart().addItem(new Item(product, amount));
+        Item target = null;
+
+        for(var item :this.getCart().getItems()){
+            if(item.getProduct().getId() == product.getId()){
+                target = item;
+            }
+        }
+
+        if(target == null){
+            target = new Item(product,0);
+            this.getCart().addItem(target);
+        }
+
+        var newquan = Math.max(target.getQuantity() + amount,0);
+        if(newquan == 0) {
+            this.getCart().getItems().remove(target);
+        }
+        else{
+            target.setQuantity(newquan);
+        }
+
         return true;
     }
 
